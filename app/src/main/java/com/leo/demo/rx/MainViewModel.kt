@@ -57,7 +57,7 @@ class MainViewModel {
             // Play volume
             play(volumes.find { volume -> volume.playState == READY })
 
-        }, { e -> Log.e("DEMO", "Update ui failed", e) })
+        }, { e -> loge("Update ui failed, ${e.message}") })
     }
 
     /**
@@ -119,7 +119,6 @@ class MainViewModel {
     ): List<VolumeData> {
         val list = volumes.toMutableList()
 
-        val activeVolumePlayState = activeVolume.playState
         when (playMode) {
             // Play mode is standby, reset play state to standby.
             PLAY_MODE_STANDBY -> {
@@ -131,7 +130,7 @@ class MainViewModel {
             PLAY_MODE_MANUAL -> {
                 volumes.forEachIndexed { index, data ->
                     list[index] = if (data.timestamp == activeVolume.timestamp) {
-                        data
+                        data.copy(playState = activeVolume.playState)
                     } else {
                         data.copy(playState = STANDBY)
                     }
@@ -148,6 +147,7 @@ class MainViewModel {
                 }
             }
         }
+        logd("PlayMode:$playMode,\nActive:$activeVolume,\nLoad data are: $list")
         return list
     }
 
@@ -168,14 +168,17 @@ class MainViewModel {
     }
 
     fun manualPlay(data: VolumeData) {
+        logd("User click manual play button. $data")
+
         playModePublisher.onNext(PLAY_MODE_MANUAL)
         activeVolumePublisher.onNext(data.copy(playState = READY))
-        Log.d(TAG, "Manual play $data")
     }
 
     fun autoPlay() {
-        activeVolumePublisher.onNext(VolumeData())
+        logd("User click auto play button.")
+
         playModePublisher.onNext(PLAY_MODE_AUTO)
+        activeVolumePublisher.onNext(VolumeData())
     }
 
     fun addNewVolumes() {
