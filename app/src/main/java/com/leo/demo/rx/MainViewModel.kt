@@ -141,8 +141,62 @@ class MainViewModel {
                 // Play the first unread volume.
                 if (activeVolume.timestamp == UNKNOWN_VOLUME) {
                     val first = volumes.find { it.playMode == PLAY_MODE_AUTO }
-                    volumes.forEachIndexed { index, data ->
-                        list
+                    if (first != null) {
+                        volumes.forEachIndexed { index, data ->
+                            list[index] = data.copy(
+                                playState = if (data.timestamp == first.timestamp) {
+                                    READY
+                                } else {
+                                    STANDBY
+                                }
+                            )
+                        }
+                    } else {
+                        logw("There is no unread volume.")
+                    }
+                }
+                // find next unread volume
+                else {
+                    val next = volumes.find { it.playMode == PLAY_MODE_AUTO }
+                    // If the next is null, auto play complete.
+                    if (next == null) {
+                        volumes.forEachIndexed { index, data ->
+                            list[index] = data.copy(
+                                playState = if (data.timestamp == activeVolume.timestamp) {
+                                    activeVolume.playState
+                                } else {
+                                    STANDBY
+                                }
+                            )
+                        }
+                    }
+                    // The active volume play complete, play the next
+                    else if (activeVolume.playState in setOf(COMPLETED, FAILED)) {
+                        volumes.forEachIndexed { index, data ->
+                            list[index] = data.copy(
+                                playState = if (data.timestamp == next.timestamp) {
+                                    READY
+                                } else {
+                                    STANDBY
+                                }
+                            )
+                        }
+                    }
+                    // Some things.
+                    else if (activeVolume.playState in setOf(READY, PLAYING, STANDBY)) {
+                        volumes.forEachIndexed { index, data ->
+                            list[index] = data.copy(
+                                playState = if (data.timestamp == activeVolume.timestamp) {
+                                    activeVolume.playState
+                                } else {
+                                    STANDBY
+                                }
+                            )
+                        }
+                    } else {
+                        volumes.forEachIndexed { index, data ->
+                            list[index] = data.copy(playState = STANDBY)
+                        }
                     }
                 }
             }
