@@ -34,7 +34,7 @@ class MainViewModel {
     @SuppressLint("CheckResult")
     fun setupListener() {
         Observable.combineLatest(
-            listenToVolumes(), listenToVolumePlayMode(), listenToActiveVolume()
+            listenToVolumes(), listenToVolumePlayMode(), listenToActiveVolumePlayState()
         ) { volumes, playMode, activeVolume ->
             // The volumes there is no play info,
             // so we need to update the volumes item play state and
@@ -220,7 +220,7 @@ class MainViewModel {
         return Observable.just(createVolumes())
     }
 
-    private fun listenToActiveVolume(): Observable<VolumeData> {
+    private fun listenToActiveVolumePlayState(): Observable<VolumeData> {
         return activeVolumePublisher.startWith(Observable.just(VolumeData()))
     }
 
