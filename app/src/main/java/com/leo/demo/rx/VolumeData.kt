@@ -1,6 +1,5 @@
-import com.leo.demo.rx.PlayMode
-import com.leo.demo.rx.PlayState
-import com.leo.demo.rx.ReadState
+package com.leo.demo.rx
+
 import com.leo.demo.rx.PlayState.STANDBY
 
 const val UNKNOWN_VOLUME = -1L

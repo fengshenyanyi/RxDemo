@@ -1,7 +1,5 @@
 package com.leo.demo.rx
 
-import UNKNOWN_VOLUME
-import VolumeData
 import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateOf
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -273,6 +271,10 @@ class MainViewModel {
             })
     }
 
+    /**
+     *  This only mock volume source, you can combine the volumes from database or from network in here.
+     *
+     */
     private fun createVolumes(size: Int = 20): List<VolumeData> {
         val list = mutableListOf<VolumeData>()
         for (i in 1..size) {
